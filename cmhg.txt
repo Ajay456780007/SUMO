@@ -1,0 +1,12 @@
+netconvert --osm-files map.osm -o network.net.xml
+   --command to convert the osm file to xml file 
+
+netedit network.net.xml
+  -- command to open the xml file in net edit
+
+python "C:\Program Files (x86)\Eclipse\Sumo\tools\randomTrips.py" -n C:\Users\Dell\Downloads\SUMO1\network.net.xml -b 0 -e 3600 -o trips.trips.xml --route-file routes.rou.xml --seed 42
+ -- command for running randomTrips.py
+
+python "C:\Program Files (x86)\Eclipse\Sumo\tools\randomTrips.py" -n C:\Users\Dell\Downloads\SUMO1\network.net.xml -b 0 -e 3600 -o python "C:\Program Files (x86)\Eclipse\Sumo\tools\randomTrips.py" -n C:\Users\Dell\Downloads\SUMO1\network.net.xml -b 0 -e 3600 -o trips.trips.xml --route-file routes.rou.xml --seed 42C:\Users\Dell\Downloads\SUMO1\trips.trips.xml --route-file routes.rou.xml --seed 42
+
+python "C:\Program Files (x86)\Eclipse\Sumo\tools\randomTrips.py" -n C:\Users\Dell\Downloads\SUMO1\network.net.xml -b 0 -e 3600 -o python "C:\Program Files (x86)\Eclipse\Sumo\tools\randomTrips.py" -n C:\Users\Dell\Downloads\SUMO1\network.net.xml -b 0 -e 3600 -o trips.trips.xml --route-file routes.rou.xml --seed 42C:\Users\Dell\Downloads\SUMO1\trips.trips.xml --route-file routes.rou.xml --seed 42
