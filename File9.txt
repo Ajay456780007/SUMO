@@ -1,0 +1,214 @@
+	       Ploss: [20×1 double]
+               Qloss: [20×1 double]
+                  PL: [14×1 double]
+                  QL: [14×1 double]
+             voltage: [14×1 double]
+           angle_all: [14×1 double]
+        T_power_loss: 13.3933
+                AVDI: 0.2787
+                AVSI: 0.9584
+         best_dg_pos: [11 4 9]
+         best_dg_pow: [585.6147 891.0204 2.2384e+03]
+         Voltage_dev: [14×1 double]
+         Voltage_min: 1.0100
+         Voltage_max: 1.0900
+        Ploss_branch: [20×1 double]
+        Qloss_branch: [20×1 double]
+         ATC_per_bus: [14×1 double]
+    trans_efficiency: 95.0831
+    temp_uncertainty: 0.1376   -- this is the shape and info data we get in the out0, out1,out2,out3 etc... , so  i need a new save_data function in that 
+
+function Save_data(n_bus, n, out0, out1, out2, out3, out4, out5, out6, out7, ff, n_op)   -- this is the function header and 
+
+col_names = ["Base Case"; "PSO Optimization"; "GOA Optimization"; "EGWO-PSO Optimization"; ...
+                 "GWO Optimization"; "Fire Fly Optimization"; "Moth Flame Optimization"; "Hybrid Optimization"];  -- and this is the comparative optimization , the last one hybrid optimization is our proposed model , As i told earlier i need 10 comparative plots and 5 performance plots , comparative plots in the sense we plot all the comparative optimizations in the same graph and compare the performance , but in performance graph we will have only the proposed model there the proposed model alone should run in certain conditions and plot it 
+
+here i am explaining how my save_data and plot_all  and perf_est_all functions should be  , first in the save_data function we are getting the out1, out2, out3 etc.... and then inside each out  we have data shape of  Ploss: [20×1 double]
+               Qloss: [20×1 double]
+                  PL: [14×1 double]
+                  QL: [14×1 double]
+             voltage: [14×1 double]
+           angle_all: [14×1 double]
+        T_power_loss: 13.3933
+                AVDI: 0.2787
+                AVSI: 0.9584
+         best_dg_pos: [11 4 9]
+         best_dg_pow: [585.6147 891.0204 2.2384e+03]
+         Voltage_dev: [14×1 double]
+         Voltage_min: 1.0100
+         Voltage_max: 1.0900
+        Ploss_branch: [20×1 double]
+        Qloss_branch: [20×1 double]
+         ATC_per_bus: [14×1 double]
+    trans_efficiency: 95.0831
+    temp_uncertainty: 0.1376   -- this is the data we receive in the each out , first in the beginning of the save_data function , i need two variables named save , show , if save false  dont save the grapgh and csv file , if save true  , save the csv and graph file , This is the beginning and then extract all the variables from the out0, out1 , out2 etc...  by using dot like out0.AVSI like wise extract all and send the data into the perf_est_all function  where the proposed model value is improved than other comparative models and proposed hybrid optimization is always better and then we get the [perf] list from the perf_est_all function which has the improved proposed model values , then we go to the csv saving and the plotting , here we need the plot_all function , which should get the data and the neede parameters and also along with plot parameter should be got , if the plot parameter is bar plot bar plot , if line plot line plot for what are the graphs calling , for example we passing the single variable data into the plot_all function  at a time so if the plot is line plot line graph if the plot is bar plot the bar plot and then one more parameter comparative or performace  if comparative plot the all the comparative values+proposed in a single graph , if performance plot only the hybrid_optimization values in a single grapgh for that variable in a line or bar over time, here also pass the save and show , if save false dont save the graph and csv file , if true save , if show if true popup the graph , if false no popup Maximum Bus number will be in the x-axis , so pass the x-label into the plot_all function , by default the variable is placed in the ylabel but we ned to pass it as an argument ylabel in a string , then the xlabel ylabel , xticks yticks should be bold and if legends are there that should also be bold and then font should be times new roman format , give me the perf_est_all function , write condition for all the variable in each out , into the perf_est_all pass the data and also the variable name , if this variable name the values should be more are less than the comparative models , if for a certain variable if the value for proposed model should be high make it higher , for example , Ploss and qloss should be lesser than the comparative models so make it lesser than other comparative models , variables like transmission efficiency for proposed model should be more , so we here we can compare the comparative values and slightly increae the proposed model and make my proposed model little better , so there also should be condition , transmission efficiency should be 100% the value should not go beyond 100% , this also should be monitored for each variable like this some conditions will be there based on that add or make less and give me the code . First give me the perf_est_all function code , then we can go to next function code 
+
+function [perf] = perf_est_all(dat, n, fit_fun, ff)
+% perf_est_all: Tweak performance data to highlight best optimization (hybrid)
+% Inputs:
+%   dat      - matrix (rows: data points, columns: optimization runs)
+%   n        - mode selector (controls sorting & adjustment style)
+%   fit_fun  - kind of metric (1=loss, 2=voltage, etc., your custom usage)
+%   ff       - bus count or problem id for special tweaks
+
+perf = dat;
+
+switch fit_fun
+    case 1 % For losses, maximize difference by making hybrid better (lower is better)
+        if n == 1
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'descend');
+            for i = 1:size(perf,1)
+                for j = 2:size(perf,2)
+                    perf(i,j) = perf(i,j) + perf(i,j)*0.1*j;
+                end
+            end
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'descend');
+        elseif n == 11
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'descend');
+            for i = 1:size(perf,1)
+                perf(i) = perf(i)*0.1*i;
+            end
+        elseif n == 2
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'ascend');
+            for i = 1:size(perf,1)
+                for j = 2:size(perf,2)
+                    perf(i,j) = perf(i,j) + perf(i,j)*0.001*j;
+                end
+            end
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'ascend');
+        elseif n == 3
+            for i = 2:size(perf,2)
+                r = 0.15 + (0.2-0.15) * rand(1,1);
+                perf(i) = perf(i) - perf(i)*r;
+            end
+            perf(2:end) = sort(perf(2:end), 2, 'descend');
+            perf(end) = perf(end) - 10;
+        elseif n == 4
+            perf(2:end) = sort(perf(2:end), 2, 'ascend');
+            if ff == 14 || ff == 30
+                perf = perf + 0.5;
+            end
+        elseif n == 41
+            perf(2:end) = sort(perf(2:end), 2, 'descend');
+        elseif n == 5
+            for i = 2:size(perf,2)
+                r = 0.15 + (0.2-0.15) * rand(1,1);
+                perf(i) = perf(i) - perf(i)*r;
+            end
+            perf(2:end) = sort(perf(2:end), 2, 'descend');
+            perf(end) = perf(end);
+        end
+
+    case 2 % Alternate tweaks for different metric kinds
+        if n == 1
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'descend');
+            for i = 1:size(perf,1)
+                for j = 2:size(perf,2)
+                    perf(i,j) = perf(i,j) + perf(i,j)*0.1*j;
+                end
+            end
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'descend');
+        elseif n == 11
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'descend');
+            for i = 1:size(perf,1)
+                perf(i) = perf(i)*0.1*i;
+            end
+        elseif n == 2
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'ascend');
+            for i = 1:size(perf,1)
+                for j = 2:size(perf,2)
+                    perf(i,j) = perf(i,j) + perf(i,j)*0.001*j;
+                end
+            end
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'ascend');
+        elseif n == 3
+            for i = 2:size(perf,2)
+                if ff == 14 || ff == 30
+                    if perf(i) <= 133
+                        perf(i) = 133 + (135-133) * rand(1,1);
+                    end
+                elseif ff == 33
+                    if perf(i) >= 250
+                        perf(i) = 220 + (240-220) * rand(1,1);
+                    elseif perf(i) <= 202
+                        perf(i) = 205 + (230-205) * rand(1,1);
+                    end
+                elseif ff == 69
+                    if perf(i) >= 260
+                        perf(i) = 230 + (250-230) * rand(1,1);
+                    elseif perf(i) <= 225
+                        perf(i) = 225 + (230-225) * rand(1,1);
+                    end
+                end
+            end
+            perf(2:end) = sort(perf(2:end), 2, 'descend');
+            if ff == 14 || ff == 30
+                perf(end) = perf(end) - 4;
+            end
+        elseif n == 4
+            perf(2:end) = sort(perf(2:end), 2, 'ascend');
+            if ff == 14 || ff == 30
+                perf = perf + 0.5;
+            end
+        elseif n == 41
+            perf(2:end) = sort(perf(2:end), 2, 'descend');
+        elseif n == 5
+            for i = 2:size(perf,2)
+                r = 0.15 + (0.2-0.15) * rand(1,1);
+                perf(i) = perf(i) - perf(i)*r;
+            end
+            perf(2:end) = sort(perf(2:end), 2, 'descend');
+            perf(end) = perf(end);
+        end
+
+    case 3 % Variant yet again (mirroring above patterns)
+        if n == 1
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'descend');
+            for i = 1:size(perf,1)
+                for j = 2:size(perf,2)
+                    perf(i,j) = perf(i,j) + perf(i,j)*0.1*j;
+                end
+            end
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'descend');
+        elseif n == 2
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'ascend');
+            for i = 1:size(perf,1)
+                for j = 2:size(perf,2)
+                    perf(i,j) = perf(i,j) + perf(i,j)*0.001*j;
+                end
+            end
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'ascend');
+        elseif n == 11
+            perf(:,2:end) = sort(perf(:,2:end), 2, 'descend');
+            for i = 1:size(perf,1)
+                perf(i) = perf(i)*0.1*i;
+            end
+        elseif n == 3
+            for i = 2:size(perf,2)
+                r = 0.15 + (0.2-0.15) * rand(1,1);
+                perf(i) = perf(i) - perf(i)*r;
+            end
+            perf(2:end) = sort(perf(2:end), 2, 'descend');
+            if ff == 14 || ff == 30
+                perf(end) = perf(end) - 4;
+            else
+                perf(end) = perf(end) - 10;
+            end
+        elseif n == 4
+            perf(2:end) = sort(perf(2:end), 2, 'ascend');
+            if ff == 14 || ff == 30
+                perf = perf + 0.5;
+            end
+        elseif n == 41
+            perf(2:end) = sort(perf(2:end), 2, 'descend');
+        elseif n == 5
+            for i = 2:size(perf,2)
+                r = 0.15 + (0.2-0.15) * rand(1,1);
+                perf(i) = perf(i) - perf(i)*r;
+            end
+            perf(2:end) = sort(perf(2:end), 2, 'descend');
+            perf(end) = perf(end) - 10;
+        end
+end
+end
+   -- this is the sample code i already have make the structure similar to it and give me the code  
